@@ -1,0 +1,7 @@
+{
+  "ext": ".ts,.js",
+  "exec": "clear && ts-node ./src/index.ts",
+  "watch": [
+    "src"
+  ]
+}
