@@ -14,8 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Poker = void 0;
+exports.Poker = exports.Hand = void 0;
 require("reflect-metadata");
+// @ts-ignore
+var pokersolver_1 = require("pokersolver");
+Object.defineProperty(exports, "Hand", { enumerable: true, get: function () { return pokersolver_1.Hand; } });
 var table_1 = require("./table");
 Object.defineProperty(exports, "Poker", { enumerable: true, get: function () { return table_1.Table; } });
 __exportStar(require("./types"), exports);

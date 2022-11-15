@@ -1,6 +1,6 @@
 {
   "name": "@rosostolato/poker",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "poker game logic",
   "main": "dist/index.js",
   "author": "rosostolato",

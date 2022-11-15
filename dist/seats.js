@@ -44,6 +44,9 @@ var Seats = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Seats.prototype.getPlayer = function (seatIndex) {
+        return this.seatsArray[seatIndex];
+    };
     Seats.prototype.sitPlayer = function (seatIndex, buyIn) {
         this.seatsArray[seatIndex] = {
             buyIn: buyIn,

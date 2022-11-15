@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -31,7 +42,7 @@ var Round = /** @class */ (function () {
             this.blinds = blinds;
             this.deck = deck;
             this.seats = seats;
-            this.winners = [];
+            this.winners = {};
             this.areBettingRoundsCompleted = false;
             this.isBettingRoundInProgress = true;
             this.state = 'preflop';
@@ -96,22 +107,22 @@ var Round = /** @class */ (function () {
         });
         var winner = pokersolver_1.Hand.winners(results.map(function (result) { return result.hand; }));
         var winners = Array.isArray(winner) ? winner : [winner];
-        this.winners = winners.map(function (winner) {
+        this.winners = winners.reduce(function (acc, winner) {
+            var _a;
             var result = results.find(function (result) { return result.hand === winner; });
             (0, assert_1.default)(result, 'No result found for winner');
-            return result.player;
-        });
-        return {
-            playerCards: this.playerCards,
-            winners: this.winners,
-        };
+            return __assign(__assign({}, acc), (_a = {}, _a[result.player.seat] = winner, _a));
+        }, {});
     };
     Round.prototype.payWinners = function () {
-        (0, assert_1.default)(this.winners.length > 0, 'No winners to pay');
+        var _this = this;
         // TODO: hanle remainder chips
-        var winnerChips = Math.floor(this.pot / this.winners.length);
-        this.winners.forEach(function (winner) {
-            winner.chips += winnerChips;
+        var playerSeats = Object.keys(this.winners);
+        (0, assert_1.default)(playerSeats.length > 0, 'No winners to pay');
+        var winnerChips = Math.floor(this.pot / playerSeats.length);
+        playerSeats.forEach(function (seat) {
+            var player = _this.seats.getPlayer(Number(seat));
+            player.chips += winnerChips;
         });
     };
     Round.prototype.takeAction = function (action, raiseBet) {

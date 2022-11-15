@@ -1,10 +1,12 @@
 import assert from 'assert';
 import { instanceToPlain, plainToInstance, Type } from 'class-transformer';
+// @ts-ignore
+import { Hand } from 'pokersolver';
 
 import { Deck } from './deck';
 import { Round } from './round';
 import { Seats } from './seats';
-import { Action, Card, Player, RoundState, WinnersResult } from './types';
+import { Action, Card, Player, RoundState } from './types';
 
 export class Table {
   @Type(() => Deck)
@@ -63,10 +65,8 @@ export class Table {
     return this._round?.state ?? null;
   }
 
-  private get deck(): Deck {
-    const deck = this._deck ?? this._round?.deck;
-    assert(deck, 'Deck not initialized');
-    return deck;
+  get winners(): { [seat: number]: Hand } {
+    return this._round?.winners ?? {};
   }
 
   private get seats(): Seats {
@@ -111,9 +111,9 @@ export class Table {
     this._round.endBettingRound();
   }
 
-  showdown(): WinnersResult {
+  showdown(): void {
     assert(this._round !== null, 'No round in progress');
-    return this._round.showdown();
+    this._round.showdown();
   }
 
   getLegalActions(): Action[] {
@@ -121,7 +121,7 @@ export class Table {
   }
 
   getPlayer(seatIndex: number): Player | null {
-    return this.seats.seatsArray[seatIndex];
+    return this.seats.getPlayer(seatIndex);
   }
 
   getPlayerCards(seatIndex: number): [Card, Card] | null {

@@ -1,4 +1,5 @@
-import { Action, Card, Player, RoundState, WinnersResult } from './types';
+import { Hand } from 'pokersolver';
+import { Action, Card, Player, RoundState } from './types';
 export declare class Table {
     private _deck;
     private _seats;
@@ -16,7 +17,9 @@ export declare class Table {
     get pot(): number;
     get rounBet(): number;
     get roundOfBetting(): RoundState | null;
-    private get deck();
+    get winners(): {
+        [seat: number]: Hand;
+    };
     private get seats();
     constructor(maxPlayers: number, blinds: [number, number]);
     sitPlayer(seatIndex: number, buyIn: number): void;
@@ -24,7 +27,7 @@ export declare class Table {
     startHand(): void;
     endHand(): void;
     endBettingRound(): void;
-    showdown(): WinnersResult;
+    showdown(): void;
     getLegalActions(): Action[];
     getPlayer(seatIndex: number): Player | null;
     getPlayerCards(seatIndex: number): [Card, Card] | null;

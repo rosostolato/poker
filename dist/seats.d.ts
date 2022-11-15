@@ -8,6 +8,7 @@ export declare class Seats {
     get players(): Player[];
     get playersCount(): number;
     constructor(length: number);
+    getPlayer(seatIndex: number): Player | null;
     sitPlayer(seatIndex: number, buyIn: number): void;
     leavePlayer(seatIndex: number): void;
     nextPlayerTurn(): Player;

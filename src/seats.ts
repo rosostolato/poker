@@ -10,7 +10,7 @@ export class Seats {
 
   get activePlayers(): Player[] {
     return this.seatsArray.filter(
-      (player): player is Player => player?.status === 'active',
+      (player): player is Player => player?.status === 'active'
     );
   }
 
@@ -31,6 +31,10 @@ export class Seats {
       this.seatsArray = new Array(length).fill(null);
       this.playerTurn = null;
     }
+  }
+
+  getPlayer(seatIndex: number): Player | null {
+    return this.seatsArray[seatIndex];
   }
 
   sitPlayer(seatIndex: number, buyIn: number): void {

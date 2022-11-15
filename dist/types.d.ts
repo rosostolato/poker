@@ -11,9 +11,3 @@ export interface Player {
 }
 export declare type PlayerStatus = 'active' | 'checked' | 'folded' | 'allIn';
 export declare type RoundState = 'preflop' | 'flop' | 'turn' | 'river';
-export interface WinnersResult {
-    playerCards: {
-        [seat: number]: [Card, Card];
-    };
-    winners: Player[];
-}

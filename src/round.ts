@@ -5,7 +5,7 @@ import { Hand } from 'pokersolver';
 
 import { Deck } from './deck';
 import { Seats } from './seats';
-import { Action, Card, Player, RoundState, WinnersResult } from './types';
+import { Action, Card, Player, RoundState } from './types';
 
 export class Round {
   readonly blinds: [number, number];
@@ -17,19 +17,18 @@ export class Round {
   areBettingRoundsCompleted: boolean;
   isBettingRoundInProgress: boolean;
   playerCards: { [seat: number]: [Card, Card] };
-  tableCards: Card[];
+  pot: number;
   roundBet: number;
   state: RoundState;
-  pot: number;
-
-  private winners: Player[];
+  tableCards: Card[];
+  winners: { [seat: number]: Hand };
 
   constructor(deck: Deck, seats: Seats, blinds: [number, number]) {
     if (arguments.length > 0) {
       this.blinds = blinds;
       this.deck = deck;
       this.seats = seats;
-      this.winners = [];
+      this.winners = {};
 
       this.areBettingRoundsCompleted = false;
       this.isBettingRoundInProgress = true;
@@ -87,7 +86,7 @@ export class Round {
     return actions;
   }
 
-  showdown(): WinnersResult {
+  showdown(): void {
     assert(this.areBettingRoundsCompleted, 'Betting rounds are not completed');
 
     const results = this.seats.players.map(player => {
@@ -104,24 +103,24 @@ export class Round {
     const winner = Hand.winners(results.map(result => result.hand));
     const winners = Array.isArray(winner) ? winner : [winner];
 
-    this.winners = winners.map(winner => {
+    this.winners = winners.reduce((acc, winner) => {
       const result = results.find(result => result.hand === winner);
       assert(result, 'No result found for winner');
-      return result.player;
-    });
-
-    return {
-      playerCards: this.playerCards,
-      winners: this.winners,
-    };
+      return {
+        ...acc,
+        [result.player.seat]: winner,
+      };
+    }, {} as { [seat: number]: Hand });
   }
 
   payWinners(): void {
-    assert(this.winners.length > 0, 'No winners to pay');
     // TODO: hanle remainder chips
-    const winnerChips = Math.floor(this.pot / this.winners.length);
-    this.winners.forEach(winner => {
-      winner.chips += winnerChips;
+    const playerSeats = Object.keys(this.winners);
+    assert(playerSeats.length > 0, 'No winners to pay');
+    const winnerChips = Math.floor(this.pot / playerSeats.length);
+    playerSeats.forEach(seat => {
+      const player = this.seats.getPlayer(Number(seat))!;
+      player.chips += winnerChips;
     });
   }
 

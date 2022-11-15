@@ -114,12 +114,10 @@ var Table = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Table.prototype, "deck", {
+    Object.defineProperty(Table.prototype, "winners", {
         get: function () {
             var _a, _b;
-            var deck = (_a = this._deck) !== null && _a !== void 0 ? _a : (_b = this._round) === null || _b === void 0 ? void 0 : _b.deck;
-            (0, assert_1.default)(deck, 'Deck not initialized');
-            return deck;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.winners) !== null && _b !== void 0 ? _b : {};
         },
         enumerable: false,
         configurable: true
@@ -158,14 +156,14 @@ var Table = /** @class */ (function () {
     };
     Table.prototype.showdown = function () {
         (0, assert_1.default)(this._round !== null, 'No round in progress');
-        return this._round.showdown();
+        this._round.showdown();
     };
     Table.prototype.getLegalActions = function () {
         var _a, _b;
         return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.getLegalActions()) !== null && _b !== void 0 ? _b : [];
     };
     Table.prototype.getPlayer = function (seatIndex) {
-        return this.seats.seatsArray[seatIndex];
+        return this.seats.getPlayer(seatIndex);
     };
     Table.prototype.getPlayerCards = function (seatIndex) {
         var _a, _b;

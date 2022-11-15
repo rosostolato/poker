@@ -21,7 +21,8 @@
     }
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "pokersolver.d.ts"
   ],
   "exclude": [
     "test/**/*.spec.ts"

@@ -1,6 +1,7 @@
+import { Hand } from 'pokersolver';
 import { Deck } from './deck';
 import { Seats } from './seats';
-import { Action, Card, RoundState, WinnersResult } from './types';
+import { Action, Card, RoundState } from './types';
 export declare class Round {
     readonly blinds: [number, number];
     readonly deck: Deck;
@@ -10,15 +11,17 @@ export declare class Round {
     playerCards: {
         [seat: number]: [Card, Card];
     };
-    tableCards: Card[];
+    pot: number;
     roundBet: number;
     state: RoundState;
-    pot: number;
-    private winners;
+    tableCards: Card[];
+    winners: {
+        [seat: number]: Hand;
+    };
     constructor(deck: Deck, seats: Seats, blinds: [number, number]);
     endBettingRound(): void;
     getLegalActions(): Action[];
-    showdown(): WinnersResult;
+    showdown(): void;
     payWinners(): void;
     takeAction(action: Action, raiseBet?: number): void;
     private dealPlayerCards;

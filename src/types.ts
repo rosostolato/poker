@@ -29,8 +29,3 @@ export interface Player {
 export type PlayerStatus = 'active' | 'checked' | 'folded' | 'allIn';
 
 export type RoundState = 'preflop' | 'flop' | 'turn' | 'river';
-
-export interface WinnersResult {
-  playerCards: { [seat: number]: [Card, Card] };
-  winners: Player[];
-}
