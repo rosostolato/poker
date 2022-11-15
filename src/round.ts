@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { Type } from 'class-transformer';
 // @ts-ignore
 import { Hand } from 'pokersolver';
 
@@ -17,25 +18,29 @@ export class Round {
 
   private winners: Player[];
   private readonly blinds: [number, number];
+  @Type(() => Deck)
   private readonly deck: Deck;
+  @Type(() => Seats)
   private readonly seats: Seats;
 
   constructor(deck: Deck, seats: Seats, blinds: [number, number]) {
-    this.blinds = blinds;
-    this.deck = deck;
-    this.seats = seats;
-    this.winners = [];
+    if (arguments.length > 0) {
+      this.blinds = blinds;
+      this.deck = deck;
+      this.seats = seats;
+      this.winners = [];
 
-    this.areBettingRoundsCompleted = false;
-    this.isBettingRoundInProgress = true;
-    this.state = 'preflop';
-    this.playerCards = {};
-    this.tableCards = [];
-    this.roundBet = 0;
-    this.pot = 0;
+      this.areBettingRoundsCompleted = false;
+      this.isBettingRoundInProgress = true;
+      this.state = 'preflop';
+      this.playerCards = {};
+      this.tableCards = [];
+      this.roundBet = 0;
+      this.pot = 0;
 
-    this.dealPlayerCards();
-    this.payBlinds();
+      this.dealPlayerCards();
+      this.payBlinds();
+    }
   }
 
   endBettingRound(): void {
@@ -146,7 +151,7 @@ export class Round {
         assert(raiseBet <= player.chips, 'Not enough chips to raise');
         assert(
           player.bet + raiseBet > this.roundBet,
-          'Raise must be greater than current bet'
+          'Raise must be greater than current bet',
         );
         player.bet += raiseBet;
         player.chips -= raiseBet;

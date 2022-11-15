@@ -1,8 +1,8 @@
-import { Card } from './types';
+import { Card, CardRank, CardSuit } from './types';
 import { shuffle } from './utils';
 
-const suitMap = ['s', 'h', 'd', 'c'];
-const rankMap = [
+const suitMap: CardSuit[] = ['s', 'h', 'd', 'c'];
+const rankMap: CardRank[] = [
   '2',
   '3',
   '4',
@@ -23,18 +23,20 @@ export class Deck {
 
   private size: number;
 
-  constructor() {
-    this.cards = [];
-    this.size = 52;
+  constructor(size: 52) {
+    if (arguments.length > 0) {
+      this.cards = [];
+      this.size = size;
 
-    let index = 0;
-    for (let suit = 0; suit < 4; suit++) {
-      for (let rank = 0; rank < 13; rank++) {
-        this.cards[index++] = this.createCard(rank, suit);
+      let index = 0;
+      for (let suit = 0; suit < 4; suit++) {
+        for (let rank = 0; rank < 13; rank++) {
+          this.cards[index++] = this.createCard(rank, suit);
+        }
       }
-    }
 
-    this.restart();
+      this.restart();
+    }
   }
 
   draw(): Card {

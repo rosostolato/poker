@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { Player } from './types';
 
 export class Seats {
@@ -11,7 +10,7 @@ export class Seats {
 
   get activePlayers(): Player[] {
     return this.seatsArray.filter(
-      (player): player is Player => player?.status === 'active'
+      (player): player is Player => player?.status === 'active',
     );
   }
 
@@ -28,8 +27,10 @@ export class Seats {
   }
 
   constructor(length: number) {
-    this.seatsArray = new Array(length).fill(null);
-    this.playerTurn = null;
+    if (arguments.length > 0) {
+      this.seatsArray = new Array(length).fill(null);
+      this.playerTurn = null;
+    }
   }
 
   sitPlayer(seatIndex: number, buyIn: number): void {

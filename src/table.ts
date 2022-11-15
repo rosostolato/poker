@@ -1,15 +1,20 @@
 import assert from 'assert';
+import { instanceToPlain, plainToInstance, Type } from 'class-transformer';
+
 import { Deck } from './deck';
 import { Round } from './round';
 import { Seats } from './seats';
 import { Action, Card, Player, RoundState, WinnersResult } from './types';
 
 export class Table {
+  @Type(() => Deck)
   private readonly deck: Deck;
+  @Type(() => Seats)
   private readonly seats: Seats;
 
-  private blinds: [number, number];
+  @Type(() => Round)
   private round: Round | null;
+  private blinds: [number, number];
 
   get cards(): Card[] {
     return this.round?.tableCards ?? [];
@@ -27,12 +32,24 @@ export class Table {
     return this.round?.areBettingRoundsCompleted ?? false;
   }
 
-  get playerTurn(): number | null {
-    return this.seats.playerTurn;
+  get numOfSeats(): number {
+    return this.seats.seatsArray.length;
+  }
+
+  get players(): Player[] {
+    return this.seats.players;
   }
 
   get playersCount(): number {
     return this.seats.playersCount;
+  }
+
+  get playerSeats(): (Player | null)[] {
+    return this.seats.seatsArray;
+  }
+
+  get playerTurn(): number | null {
+    return this.seats.playerTurn;
   }
 
   get pot(): number {
@@ -48,10 +65,12 @@ export class Table {
   }
 
   constructor(maxPlayers: number, blinds: [number, number]) {
-    this.blinds = blinds;
-    this.deck = new Deck();
-    this.seats = new Seats(maxPlayers);
-    this.round = null;
+    if (arguments.length > 0) {
+      this.blinds = blinds;
+      this.deck = new Deck(52);
+      this.seats = new Seats(maxPlayers);
+      this.round = null;
+    }
   }
 
   endBettingRound(): void {
@@ -97,5 +116,13 @@ export class Table {
   takeAction(action: Action, raiseBet?: number): void {
     assert(this.round !== null, 'No round in progress');
     this.round.takeAction(action, raiseBet);
+  }
+
+  toJSON(): string {
+    return JSON.stringify(instanceToPlain(this));
+  }
+
+  static fromJSON(json: string): Table {
+    return plainToInstance(Table, JSON.parse(json));
   }
 }
