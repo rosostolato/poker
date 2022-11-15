@@ -1,46 +1,65 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Seats = void 0;
-class Seats {
-    playerTurn;
-    seatsArray = [];
-    get currentPlayer() {
-        return this.playerTurn === null ? null : this.seatsArray[this.playerTurn];
-    }
-    get activePlayers() {
-        return this.seatsArray.filter((player) => player?.status === 'active');
-    }
-    get activePlayersCount() {
-        return this.activePlayers.length;
-    }
-    get players() {
-        return this.seatsArray.filter((player) => !!player);
-    }
-    get playersCount() {
-        return this.players.length;
-    }
-    constructor(length) {
+var Seats = /** @class */ (function () {
+    function Seats(length) {
+        this.seatsArray = [];
         if (arguments.length > 0) {
             this.seatsArray = new Array(length).fill(null);
             this.playerTurn = null;
         }
     }
-    sitPlayer(seatIndex, buyIn) {
+    Object.defineProperty(Seats.prototype, "currentPlayer", {
+        get: function () {
+            return this.playerTurn === null ? null : this.seatsArray[this.playerTurn];
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Seats.prototype, "activePlayers", {
+        get: function () {
+            return this.seatsArray.filter(function (player) { return (player === null || player === void 0 ? void 0 : player.status) === 'active'; });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Seats.prototype, "activePlayersCount", {
+        get: function () {
+            return this.activePlayers.length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Seats.prototype, "players", {
+        get: function () {
+            return this.seatsArray.filter(function (player) { return !!player; });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Seats.prototype, "playersCount", {
+        get: function () {
+            return this.players.length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Seats.prototype.sitPlayer = function (seatIndex, buyIn) {
         this.seatsArray[seatIndex] = {
-            buyIn,
+            buyIn: buyIn,
             bet: 0,
             chips: buyIn,
             seat: seatIndex,
             status: 'active',
         };
-    }
-    leavePlayer(seatIndex) {
+    };
+    Seats.prototype.leavePlayer = function (seatIndex) {
         this.seatsArray[seatIndex] = null;
         if (seatIndex === this.playerTurn) {
             this.nextPlayerTurn();
         }
-    }
-    nextPlayerTurn() {
+    };
+    Seats.prototype.nextPlayerTurn = function () {
         if (this.playerTurn === null) {
             this.playerTurn = 0;
         }
@@ -52,7 +71,8 @@ class Seats {
             this.nextPlayerTurn();
         }
         return this.currentPlayer;
-    }
-}
+    };
+    return Seats;
+}());
 exports.Seats = Seats;
 //# sourceMappingURL=seats.js.map

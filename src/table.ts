@@ -8,28 +8,27 @@ import { Action, Card, Player, RoundState, WinnersResult } from './types';
 
 export class Table {
   @Type(() => Deck)
-  private readonly deck: Deck;
+  private _deck: Deck | null;
   @Type(() => Seats)
-  private readonly seats: Seats;
-
+  private _seats: Seats | null;
   @Type(() => Round)
-  private round: Round | null;
-  private blinds: [number, number];
+  private _round: Round | null;
+  private _blinds: [number, number];
 
   get cards(): Card[] {
-    return this.round?.tableCards ?? [];
+    return this._round?.tableCards ?? [];
   }
 
   get isHandInProgress(): boolean {
-    return this.round !== null;
+    return this._round !== null;
   }
 
   get isBettingRoundInProgress(): boolean {
-    return this.round?.isBettingRoundInProgress ?? false;
+    return this._round?.isBettingRoundInProgress ?? false;
   }
 
   get areBettingRoundsCompleted(): boolean {
-    return this.round?.areBettingRoundsCompleted ?? false;
+    return this._round?.areBettingRoundsCompleted ?? false;
   }
 
   get numOfSeats(): number {
@@ -53,56 +52,36 @@ export class Table {
   }
 
   get pot(): number {
-    return this.round?.pot ?? 0;
+    return this._round?.pot ?? 0;
   }
 
   get rounBet(): number {
-    return this.round?.roundBet ?? 0;
+    return this._round?.roundBet ?? 0;
   }
 
   get roundOfBetting(): RoundState | null {
-    return this.round?.state ?? null;
+    return this._round?.state ?? null;
+  }
+
+  private get deck(): Deck {
+    const deck = this._deck ?? this._round?.deck;
+    assert(deck, 'Deck not initialized');
+    return deck;
+  }
+
+  private get seats(): Seats {
+    const seats = this._seats ?? this._round?.seats;
+    assert(seats, 'Seats not initialized');
+    return seats;
   }
 
   constructor(maxPlayers: number, blinds: [number, number]) {
     if (arguments.length > 0) {
-      this.blinds = blinds;
-      this.deck = new Deck(52);
-      this.seats = new Seats(maxPlayers);
-      this.round = null;
+      this._blinds = blinds;
+      this._deck = new Deck(52);
+      this._seats = new Seats(maxPlayers);
+      this._round = null;
     }
-  }
-
-  endBettingRound(): void {
-    assert(this.round !== null, 'No round in progress');
-    this.round.endBettingRound();
-  }
-
-  endHand(): void {
-    assert(this.round !== null, 'No round in progress');
-    this.round.payWinners();
-    this.round = null;
-  }
-
-  getLegalActions(): Action[] {
-    return this.round?.getLegalActions() ?? [];
-  }
-
-  getPlayer(seatIndex: number): Player | null {
-    return this.seats.seatsArray[seatIndex];
-  }
-
-  getPlayerCards(seatIndex: number): [Card, Card] | null {
-    return this.round?.playerCards[seatIndex] ?? null;
-  }
-
-  showdown(): WinnersResult {
-    assert(this.round !== null, 'No round in progress');
-    return this.round.showdown();
-  }
-
-  startHand(): void {
-    this.round = new Round(this.deck, this.seats, this.blinds);
   }
 
   sitPlayer(seatIndex: number, buyIn: number): void {
@@ -113,9 +92,45 @@ export class Table {
     this.seats.leavePlayer(seatIndex);
   }
 
+  startHand(): void {
+    this._round = new Round(this._deck!, this._seats!, this._blinds);
+    this._deck = null;
+    this._seats = null;
+  }
+
+  endHand(): void {
+    assert(this._round !== null, 'No round in progress');
+    this._round.payWinners();
+    this._deck = this._round.deck;
+    this._seats = this._round.seats;
+    this._round = null;
+  }
+
+  endBettingRound(): void {
+    assert(this._round !== null, 'No round in progress');
+    this._round.endBettingRound();
+  }
+
+  showdown(): WinnersResult {
+    assert(this._round !== null, 'No round in progress');
+    return this._round.showdown();
+  }
+
+  getLegalActions(): Action[] {
+    return this._round?.getLegalActions() ?? [];
+  }
+
+  getPlayer(seatIndex: number): Player | null {
+    return this.seats.seatsArray[seatIndex];
+  }
+
+  getPlayerCards(seatIndex: number): [Card, Card] | null {
+    return this._round?.playerCards[seatIndex] ?? null;
+  }
+
   takeAction(action: Action, raiseBet?: number): void {
-    assert(this.round !== null, 'No round in progress');
-    this.round.takeAction(action, raiseBet);
+    assert(this._round !== null, 'No round in progress');
+    this._round.takeAction(action, raiseBet);
   }
 
   toJSON(): string {

@@ -1,19 +1,29 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "target": "ESNext",
-    "lib": [
-      "ESNext",
-    ],
-    "rootDir": "src",
+    "target": "es5",
+    "module": "commonjs",
     "outDir": "dist",
-    "strict": true,
     "sourceMap": true,
     "declaration": true,
-    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true
-  }
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/"
+      ],
+      "types/*": [
+        "src/types/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "test/**/*.spec.ts"
+  ]
 }

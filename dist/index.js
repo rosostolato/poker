@@ -15,6 +15,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Poker = void 0;
+require("reflect-metadata");
 var table_1 = require("./table");
 Object.defineProperty(exports, "Poker", { enumerable: true, get: function () { return table_1.Table; } });
 __exportStar(require("./types"), exports);

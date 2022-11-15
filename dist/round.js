@@ -5,30 +5,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Round = void 0;
-const assert_1 = __importDefault(require("assert"));
-const class_transformer_1 = require("class-transformer");
+var assert_1 = __importDefault(require("assert"));
+var class_transformer_1 = require("class-transformer");
 // @ts-ignore
-const pokersolver_1 = require("pokersolver");
-const deck_1 = require("./deck");
-const seats_1 = require("./seats");
-class Round {
-    areBettingRoundsCompleted;
-    isBettingRoundInProgress;
-    playerCards;
-    tableCards;
-    roundBet;
-    state;
-    pot;
-    winners;
-    blinds;
-    deck;
-    seats;
-    constructor(deck, seats, blinds) {
+var pokersolver_1 = require("pokersolver");
+var deck_1 = require("./deck");
+var seats_1 = require("./seats");
+var Round = /** @class */ (function () {
+    function Round(deck, seats, blinds) {
         if (arguments.length > 0) {
             this.blinds = blinds;
             this.deck = deck;
@@ -45,11 +43,12 @@ class Round {
             this.payBlinds();
         }
     }
-    endBettingRound() {
+    Round.prototype.endBettingRound = function () {
+        var _this = this;
         this.roundBet = 0;
         this.isBettingRoundInProgress = true;
-        this.seats.players.forEach(player => {
-            this.pot += player.bet;
+        this.seats.players.forEach(function (player) {
+            _this.pot += player.bet;
             player.status = 'active';
             player.bet = 0;
         });
@@ -69,10 +68,10 @@ class Round {
             this.isBettingRoundInProgress = false;
             this.areBettingRoundsCompleted = true;
         }
-    }
-    getLegalActions() {
-        const actions = ['fold'];
-        const player = this.seats.currentPlayer;
+    };
+    Round.prototype.getLegalActions = function () {
+        var actions = ['fold'];
+        var player = this.seats.currentPlayer;
         (0, assert_1.default)(player, 'No player at seat');
         if (player.bet === this.roundBet) {
             actions.push('check');
@@ -84,23 +83,21 @@ class Round {
             actions.push('raise');
         }
         return actions;
-    }
-    showdown() {
+    };
+    Round.prototype.showdown = function () {
+        var _this = this;
         (0, assert_1.default)(this.areBettingRoundsCompleted, 'Betting rounds are not completed');
-        const results = this.seats.players.map(player => {
-            const hand = pokersolver_1.Hand.solve([
-                ...this.tableCards,
-                ...this.playerCards[player.seat],
-            ]);
+        var results = this.seats.players.map(function (player) {
+            var hand = pokersolver_1.Hand.solve(__spreadArray(__spreadArray([], _this.tableCards, true), _this.playerCards[player.seat], true));
             return {
-                player,
-                hand,
+                player: player,
+                hand: hand,
             };
         });
-        const winner = pokersolver_1.Hand.winners(results.map(result => result.hand));
-        const winners = Array.isArray(winner) ? winner : [winner];
-        this.winners = winners.map(winner => {
-            const result = results.find(result => result.hand === winner);
+        var winner = pokersolver_1.Hand.winners(results.map(function (result) { return result.hand; }));
+        var winners = Array.isArray(winner) ? winner : [winner];
+        this.winners = winners.map(function (winner) {
+            var result = results.find(function (result) { return result.hand === winner; });
             (0, assert_1.default)(result, 'No result found for winner');
             return result.player;
         });
@@ -108,22 +105,22 @@ class Round {
             playerCards: this.playerCards,
             winners: this.winners,
         };
-    }
-    payWinners() {
+    };
+    Round.prototype.payWinners = function () {
         (0, assert_1.default)(this.winners.length > 0, 'No winners to pay');
         // TODO: hanle remainder chips
-        const winnerChips = Math.floor(this.pot / this.winners.length);
-        this.winners.forEach(winner => {
+        var winnerChips = Math.floor(this.pot / this.winners.length);
+        this.winners.forEach(function (winner) {
             winner.chips += winnerChips;
         });
-    }
-    takeAction(action, raiseBet) {
+    };
+    Round.prototype.takeAction = function (action, raiseBet) {
         (0, assert_1.default)(this.isBettingRoundInProgress, 'Betting round is not in progress');
-        const player = this.seats.currentPlayer;
+        var player = this.seats.currentPlayer;
         (0, assert_1.default)(player, 'No player at seat');
         switch (action) {
             case 'call':
-                const callAmount = Math.min(this.roundBet - player.bet, player.chips);
+                var callAmount = Math.min(this.roundBet - player.bet, player.chips);
                 player.bet += callAmount;
                 player.chips -= callAmount;
                 this.updatePlayerStatus(player);
@@ -135,7 +132,7 @@ class Round {
                 player.status = 'folded';
                 break;
             case 'raise':
-                raiseBet ??= 1;
+                raiseBet !== null && raiseBet !== void 0 ? raiseBet : (raiseBet = 1);
                 (0, assert_1.default)(raiseBet <= player.chips, 'Not enough chips to raise');
                 (0, assert_1.default)(player.bet + raiseBet > this.roundBet, 'Raise must be greater than current bet');
                 player.bet += raiseBet;
@@ -144,30 +141,31 @@ class Round {
                 this.updatePlayerStatus(player, true);
                 break;
         }
-        const nextPlayer = this.seats.nextPlayerTurn();
+        var nextPlayer = this.seats.nextPlayerTurn();
         if (nextPlayer.status !== 'active') {
             this.isBettingRoundInProgress = false;
         }
-    }
-    dealPlayerCards() {
-        this.playerCards = this.seats.seatsArray.reduce((acc, player, i) => {
+    };
+    Round.prototype.dealPlayerCards = function () {
+        var _this = this;
+        this.playerCards = this.seats.seatsArray.reduce(function (acc, player, i) {
             if (player) {
-                acc[i] = [this.deck.draw(), this.deck.draw()];
+                acc[i] = [_this.deck.draw(), _this.deck.draw()];
             }
             return acc;
         }, {});
-    }
-    payBlinds() {
-        const smallBlindPlayer = this.seats.nextPlayerTurn();
-        const bigBlindPlayer = this.seats.nextPlayerTurn();
+    };
+    Round.prototype.payBlinds = function () {
+        var smallBlindPlayer = this.seats.nextPlayerTurn();
+        var bigBlindPlayer = this.seats.nextPlayerTurn();
         smallBlindPlayer.bet = this.blinds[0];
         smallBlindPlayer.chips -= this.blinds[0];
         bigBlindPlayer.bet = this.blinds[1];
         bigBlindPlayer.chips -= this.blinds[1];
         this.roundBet = this.blinds[1];
         this.seats.nextPlayerTurn();
-    }
-    updatePlayerStatus(player, isRaise) {
+    };
+    Round.prototype.updatePlayerStatus = function (player, isRaise) {
         if (player.chips === 0) {
             player.status = 'allIn';
         }
@@ -175,19 +173,20 @@ class Round {
             player.status = 'checked';
         }
         if (isRaise) {
-            this.seats.players.forEach(seatPlayer => {
+            this.seats.players.forEach(function (seatPlayer) {
                 if (seatPlayer !== player && seatPlayer.status === 'checked') {
                     seatPlayer.status = 'active';
                 }
             });
         }
-    }
-}
-__decorate([
-    (0, class_transformer_1.Type)(() => deck_1.Deck)
-], Round.prototype, "deck", void 0);
-__decorate([
-    (0, class_transformer_1.Type)(() => seats_1.Seats)
-], Round.prototype, "seats", void 0);
+    };
+    __decorate([
+        (0, class_transformer_1.Type)(function () { return deck_1.Deck; })
+    ], Round.prototype, "deck", void 0);
+    __decorate([
+        (0, class_transformer_1.Type)(function () { return seats_1.Seats; })
+    ], Round.prototype, "seats", void 0);
+    return Round;
+}());
 exports.Round = Round;
 //# sourceMappingURL=round.js.map

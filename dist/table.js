@@ -10,110 +10,187 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Table = void 0;
-const assert_1 = __importDefault(require("assert"));
-const class_transformer_1 = require("class-transformer");
-const deck_1 = require("./deck");
-const round_1 = require("./round");
-const seats_1 = require("./seats");
-class Table {
-    deck;
-    seats;
-    round;
-    blinds;
-    get cards() {
-        return this.round?.tableCards ?? [];
-    }
-    get isHandInProgress() {
-        return this.round !== null;
-    }
-    get isBettingRoundInProgress() {
-        return this.round?.isBettingRoundInProgress ?? false;
-    }
-    get areBettingRoundsCompleted() {
-        return this.round?.areBettingRoundsCompleted ?? false;
-    }
-    get numOfSeats() {
-        return this.seats.seatsArray.length;
-    }
-    get players() {
-        return this.seats.players;
-    }
-    get playersCount() {
-        return this.seats.playersCount;
-    }
-    get playerSeats() {
-        return this.seats.seatsArray;
-    }
-    get playerTurn() {
-        return this.seats.playerTurn;
-    }
-    get pot() {
-        return this.round?.pot ?? 0;
-    }
-    get rounBet() {
-        return this.round?.roundBet ?? 0;
-    }
-    get roundOfBetting() {
-        return this.round?.state ?? null;
-    }
-    constructor(maxPlayers, blinds) {
+var assert_1 = __importDefault(require("assert"));
+var class_transformer_1 = require("class-transformer");
+var deck_1 = require("./deck");
+var round_1 = require("./round");
+var seats_1 = require("./seats");
+var Table = /** @class */ (function () {
+    function Table(maxPlayers, blinds) {
         if (arguments.length > 0) {
-            this.blinds = blinds;
-            this.deck = new deck_1.Deck(52);
-            this.seats = new seats_1.Seats(maxPlayers);
-            this.round = null;
+            this._blinds = blinds;
+            this._deck = new deck_1.Deck(52);
+            this._seats = new seats_1.Seats(maxPlayers);
+            this._round = null;
         }
     }
-    endBettingRound() {
-        (0, assert_1.default)(this.round !== null, 'No round in progress');
-        this.round.endBettingRound();
-    }
-    endHand() {
-        (0, assert_1.default)(this.round !== null, 'No round in progress');
-        this.round.payWinners();
-        this.round = null;
-    }
-    getLegalActions() {
-        return this.round?.getLegalActions() ?? [];
-    }
-    getPlayer(seatIndex) {
-        return this.seats.seatsArray[seatIndex];
-    }
-    getPlayerCards(seatIndex) {
-        return this.round?.playerCards[seatIndex] ?? null;
-    }
-    showdown() {
-        (0, assert_1.default)(this.round !== null, 'No round in progress');
-        return this.round.showdown();
-    }
-    startHand() {
-        this.round = new round_1.Round(this.deck, this.seats, this.blinds);
-    }
-    sitPlayer(seatIndex, buyIn) {
+    Object.defineProperty(Table.prototype, "cards", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.tableCards) !== null && _b !== void 0 ? _b : [];
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "isHandInProgress", {
+        get: function () {
+            return this._round !== null;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "isBettingRoundInProgress", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.isBettingRoundInProgress) !== null && _b !== void 0 ? _b : false;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "areBettingRoundsCompleted", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.areBettingRoundsCompleted) !== null && _b !== void 0 ? _b : false;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "numOfSeats", {
+        get: function () {
+            return this.seats.seatsArray.length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "players", {
+        get: function () {
+            return this.seats.players;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "playersCount", {
+        get: function () {
+            return this.seats.playersCount;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "playerSeats", {
+        get: function () {
+            return this.seats.seatsArray;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "playerTurn", {
+        get: function () {
+            return this.seats.playerTurn;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "pot", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.pot) !== null && _b !== void 0 ? _b : 0;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "rounBet", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.roundBet) !== null && _b !== void 0 ? _b : 0;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "roundOfBetting", {
+        get: function () {
+            var _a, _b;
+            return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.state) !== null && _b !== void 0 ? _b : null;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "deck", {
+        get: function () {
+            var _a, _b;
+            var deck = (_a = this._deck) !== null && _a !== void 0 ? _a : (_b = this._round) === null || _b === void 0 ? void 0 : _b.deck;
+            (0, assert_1.default)(deck, 'Deck not initialized');
+            return deck;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Table.prototype, "seats", {
+        get: function () {
+            var _a, _b;
+            var seats = (_a = this._seats) !== null && _a !== void 0 ? _a : (_b = this._round) === null || _b === void 0 ? void 0 : _b.seats;
+            (0, assert_1.default)(seats, 'Seats not initialized');
+            return seats;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Table.prototype.sitPlayer = function (seatIndex, buyIn) {
         this.seats.sitPlayer(seatIndex, buyIn);
-    }
-    leavePlayer(seatIndex) {
+    };
+    Table.prototype.leavePlayer = function (seatIndex) {
         this.seats.leavePlayer(seatIndex);
-    }
-    takeAction(action, raiseBet) {
-        (0, assert_1.default)(this.round !== null, 'No round in progress');
-        this.round.takeAction(action, raiseBet);
-    }
-    toJSON() {
+    };
+    Table.prototype.startHand = function () {
+        this._round = new round_1.Round(this._deck, this._seats, this._blinds);
+        this._deck = null;
+        this._seats = null;
+    };
+    Table.prototype.endHand = function () {
+        (0, assert_1.default)(this._round !== null, 'No round in progress');
+        this._round.payWinners();
+        this._deck = this._round.deck;
+        this._seats = this._round.seats;
+        this._round = null;
+    };
+    Table.prototype.endBettingRound = function () {
+        (0, assert_1.default)(this._round !== null, 'No round in progress');
+        this._round.endBettingRound();
+    };
+    Table.prototype.showdown = function () {
+        (0, assert_1.default)(this._round !== null, 'No round in progress');
+        return this._round.showdown();
+    };
+    Table.prototype.getLegalActions = function () {
+        var _a, _b;
+        return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.getLegalActions()) !== null && _b !== void 0 ? _b : [];
+    };
+    Table.prototype.getPlayer = function (seatIndex) {
+        return this.seats.seatsArray[seatIndex];
+    };
+    Table.prototype.getPlayerCards = function (seatIndex) {
+        var _a, _b;
+        return (_b = (_a = this._round) === null || _a === void 0 ? void 0 : _a.playerCards[seatIndex]) !== null && _b !== void 0 ? _b : null;
+    };
+    Table.prototype.takeAction = function (action, raiseBet) {
+        (0, assert_1.default)(this._round !== null, 'No round in progress');
+        this._round.takeAction(action, raiseBet);
+    };
+    Table.prototype.toJSON = function () {
         return JSON.stringify((0, class_transformer_1.instanceToPlain)(this));
-    }
-    static fromJSON(json) {
+    };
+    Table.fromJSON = function (json) {
         return (0, class_transformer_1.plainToInstance)(Table, JSON.parse(json));
-    }
-}
-__decorate([
-    (0, class_transformer_1.Type)(() => deck_1.Deck)
-], Table.prototype, "deck", void 0);
-__decorate([
-    (0, class_transformer_1.Type)(() => seats_1.Seats)
-], Table.prototype, "seats", void 0);
-__decorate([
-    (0, class_transformer_1.Type)(() => round_1.Round)
-], Table.prototype, "round", void 0);
+    };
+    __decorate([
+        (0, class_transformer_1.Type)(function () { return deck_1.Deck; })
+    ], Table.prototype, "_deck", void 0);
+    __decorate([
+        (0, class_transformer_1.Type)(function () { return seats_1.Seats; })
+    ], Table.prototype, "_seats", void 0);
+    __decorate([
+        (0, class_transformer_1.Type)(function () { return round_1.Round; })
+    ], Table.prototype, "_round", void 0);
+    return Table;
+}());
 exports.Table = Table;
 //# sourceMappingURL=table.js.map

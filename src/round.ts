@@ -8,6 +8,12 @@ import { Seats } from './seats';
 import { Action, Card, Player, RoundState, WinnersResult } from './types';
 
 export class Round {
+  readonly blinds: [number, number];
+  @Type(() => Deck)
+  readonly deck: Deck;
+  @Type(() => Seats)
+  readonly seats: Seats;
+
   areBettingRoundsCompleted: boolean;
   isBettingRoundInProgress: boolean;
   playerCards: { [seat: number]: [Card, Card] };
@@ -17,11 +23,6 @@ export class Round {
   pot: number;
 
   private winners: Player[];
-  private readonly blinds: [number, number];
-  @Type(() => Deck)
-  private readonly deck: Deck;
-  @Type(() => Seats)
-  private readonly seats: Seats;
 
   constructor(deck: Deck, seats: Seats, blinds: [number, number]) {
     if (arguments.length > 0) {
@@ -151,7 +152,7 @@ export class Round {
         assert(raiseBet <= player.chips, 'Not enough chips to raise');
         assert(
           player.bet + raiseBet > this.roundBet,
-          'Raise must be greater than current bet',
+          'Raise must be greater than current bet'
         );
         player.bet += raiseBet;
         player.chips -= raiseBet;
